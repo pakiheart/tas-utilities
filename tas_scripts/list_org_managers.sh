@@ -11,7 +11,7 @@ for page in $(seq 1 $total_pages); do
     if [[ $page == $total_pages ]]; then
       continue
     fi
-    orgs+="\n"
+    orgs+=$'\n'
 done
 
 IFS=$'\n'
