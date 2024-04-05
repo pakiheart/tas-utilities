@@ -1,7 +1,14 @@
  #!/bin/bash
 #login into cf cli
 
+if [ $# -eq 0 ]
+  then
+    echo "No arguments supplied"
+    echo "Usage: " $0 "/path/to/config/dir(/mydir/cf-mgmt)"
+    exit 1
+fi
 
+Path_To_Config_Dir=$1
 
 total_pages=$(cf curl /v3/organizations | jq -r .pagination.total_pages)
 IFS=$'\n'
@@ -29,24 +36,24 @@ for org in $orgs; do
     labels=$(cf curl /v3/organizations/$org_guid | jq '.metadata.labels' | jq -r 'to_entries[] | (.key) + ": " + (.value)')
     annotations=$(cf curl /v3/organizations/$org_guid | jq '.metadata.annotations' | jq -r 'to_entries[] | (.key) + ": " + (.value)')
     if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-        sed -i '/metadata/d' ~/workspace/TAS/tas-cf-mgmt/config/$org_name/orgConfig.yml
-        sed -i '/^$/d' ~/workspace/TAS/tas-cf-mgmt/config/$org_name/orgConfig.yml
+        sed -i '/metadata/d' $Path_To_Config_Dir/config/$org_name/orgConfig.yml
+        sed -i '/^$/d' $Path_To_Config_Dir/config/$org_name/orgConfig.yml
     elif [[ "$OSTYPE" == "darwin"* ]]; then
         # Mac OSX
-        sed -i '' '/metadata/d' ~/workspace/TAS/tas-cf-mgmt/config/$org_name/orgConfig.yml
-        sed -i '' '/^$/d' ~/workspace/TAS/tas-cf-mgmt/config/$org_name/orgConfig.yml
+        sed -i '' '/metadata/d' $Path_To_Config_Dir/config/$org_name/orgConfig.yml
+        sed -i '' '/^$/d' $Path_To_Config_Dir/config/$org_name/orgConfig.yml
     fi
-    echo "metadata:" >> ~/workspace/TAS/tas-cf-mgmt/config/$org_name/orgConfig.yml
-    echo "  labels:" >> ~/workspace/TAS/tas-cf-mgmt/config/$org_name/orgConfig.yml
+    echo "metadata:" >> $Path_To_Config_Dir/config/$org_name/orgConfig.yml
+    echo "  labels:" >> $Path_To_Config_Dir/config/$org_name/orgConfig.yml
     for label in $labels
     do
-        echo "    $label"  >> ~/workspace/TAS/tas-cf-mgmt/config/$org_name/orgConfig.yml
+        echo "    $label"  >> $Path_To_Config_Dir/config/$org_name/orgConfig.yml
     done
 
-    echo "  annotations:" >> ~/workspace/TAS/tas-cf-mgmt/config/$org_name/orgConfig.yml
+    echo "  annotations:" >> $Path_To_Config_Dir/config/$org_name/orgConfig.yml
     for annotation in $annotations
     do
-        echo "    $annotation"  >> ~/workspace/TAS/tas-cf-mgmt/config/$org_name/orgConfig.yml
+        echo "    $annotation"  >> $Path_To_Config_Dir/config/$org_name/orgConfig.yml
     done
 
     #update all spaces metadata
@@ -69,25 +76,25 @@ for org in $orgs; do
         labels=$(cf curl /v3/spaces/$space_guid | jq '.metadata.labels' | jq -r 'to_entries[] | (.key) + ": " + (.value)')
         annotations=$(cf curl /v3/spaces/$space_guid | jq '.metadata.annotations' | jq -r 'to_entries[] | (.key) + ": " + (.value)')
         if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-            sed -i '/metadata/d' ~/workspace/TAS/tas-cf-mgmt/config/$org_name/$space_name/spaceConfig.yml
-            sed -i '/^$/d' ~/workspace/TAS/tas-cf-mgmt/config/$org_name/$space_name/spaceConfig.yml
+            sed -i '/metadata/d' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
+            sed -i '/^$/d' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
 
         elif [[ "$OSTYPE" == "darwin"* ]]; then
             # Mac OSX        
-            sed -i '' '/metadata/d' ~/workspace/TAS/tas-cf-mgmt/config/$org_name/$space_name/spaceConfig.yml
-            sed -i '' '/^$/d' ~/workspace/TAS/tas-cf-mgmt/config/$org_name/$space_name/spaceConfig.yml
+            sed -i '' '/metadata/d' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
+            sed -i '' '/^$/d' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
         fi
-        echo "metadata:" >> ~/workspace/TAS/tas-cf-mgmt/config/$org_name/$space_name/spaceConfig.yml
-        echo "  labels:" >> ~/workspace/TAS/tas-cf-mgmt/config/$org_name/$space_name/spaceConfig.yml
+        echo "metadata:" >> $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
+        echo "  labels:" >> $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
         for label in $labels
         do
-            echo "    $label"  >> ~/workspace/TAS/tas-cf-mgmt/config/$org_name/$space_name/spaceConfig.yml
+            echo "    $label"  >> $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
         done
 
-        echo "  annotations:" >> ~/workspace/TAS/tas-cf-mgmt/config/$org_name/$space_name/spaceConfig.yml
+        echo "  annotations:" >> $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
         for annotation in $annotations
         do
-            echo "    $annotation"  >> ~/workspace/TAS/tas-cf-mgmt/config/$org_name/$space_name/spaceConfig.yml
+            echo "    $annotation"  >> $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
         done
     done
 done
