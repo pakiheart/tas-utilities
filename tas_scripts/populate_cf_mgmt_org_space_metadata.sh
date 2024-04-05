@@ -89,9 +89,5 @@ for org in $orgs; do
         do
             echo "    $annotation"  >> ~/workspace/TAS/tas-cf-mgmt/config/$org_name/$space_name/spaceConfig.yml
         done
-
-
     done
-
-
 done
