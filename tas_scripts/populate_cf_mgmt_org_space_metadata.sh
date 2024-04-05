@@ -1,6 +1,6 @@
  #!/bin/bash
 #login into cf cli
-set -e
+
 
 
 total_pages=$(cf curl /v3/organizations | jq -r .pagination.total_pages)
@@ -25,11 +25,17 @@ for org in $orgs; do
     then
         continue
     fi
-    echo $org_name
+    echo "Org: " $org_name
     labels=$(cf curl /v3/organizations/$org_guid | jq '.metadata.labels' | jq -r 'to_entries[] | (.key) + ": " + (.value)')
     annotations=$(cf curl /v3/organizations/$org_guid | jq '.metadata.annotations' | jq -r 'to_entries[] | (.key) + ": " + (.value)')
-    sed -i '' '/metadata/d' ~/workspace/TAS/tas-cf-mgmt/config/$org_name/orgConfig.yml
-    sed -i '' '/^$/d' ~/workspace/TAS/tas-cf-mgmt/config/$org_name/orgConfig.yml
+    if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+        sed -i '/metadata/d' ~/workspace/TAS/tas-cf-mgmt/config/$org_name/orgConfig.yml
+        sed -i '/^$/d' ~/workspace/TAS/tas-cf-mgmt/config/$org_name/orgConfig.yml
+    elif [[ "$OSTYPE" == "darwin"* ]]; then
+        # Mac OSX
+        sed -i '' '/metadata/d' ~/workspace/TAS/tas-cf-mgmt/config/$org_name/orgConfig.yml
+        sed -i '' '/^$/d' ~/workspace/TAS/tas-cf-mgmt/config/$org_name/orgConfig.yml
+    fi
     echo "metadata:" >> ~/workspace/TAS/tas-cf-mgmt/config/$org_name/orgConfig.yml
     echo "  labels:" >> ~/workspace/TAS/tas-cf-mgmt/config/$org_name/orgConfig.yml
     for label in $labels
@@ -62,8 +68,15 @@ for org in $orgs; do
         echo "Space: " $space_name
         labels=$(cf curl /v3/spaces/$space_guid | jq '.metadata.labels' | jq -r 'to_entries[] | (.key) + ": " + (.value)')
         annotations=$(cf curl /v3/spaces/$space_guid | jq '.metadata.annotations' | jq -r 'to_entries[] | (.key) + ": " + (.value)')
-        sed -i '' '/metadata/d' ~/workspace/TAS/tas-cf-mgmt/config/$org_name/$space_name/spaceConfig.yml
-        sed -i '' '/^$/d' ~/workspace/TAS/tas-cf-mgmt/config/$org_name/$space_name/spaceConfig.yml
+        if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+            sed -i '/metadata/d' ~/workspace/TAS/tas-cf-mgmt/config/$org_name/$space_name/spaceConfig.yml
+            sed -i '/^$/d' ~/workspace/TAS/tas-cf-mgmt/config/$org_name/$space_name/spaceConfig.yml
+
+        elif [[ "$OSTYPE" == "darwin"* ]]; then
+            # Mac OSX        
+            sed -i '' '/metadata/d' ~/workspace/TAS/tas-cf-mgmt/config/$org_name/$space_name/spaceConfig.yml
+            sed -i '' '/^$/d' ~/workspace/TAS/tas-cf-mgmt/config/$org_name/$space_name/spaceConfig.yml
+        fi
         echo "metadata:" >> ~/workspace/TAS/tas-cf-mgmt/config/$org_name/$space_name/spaceConfig.yml
         echo "  labels:" >> ~/workspace/TAS/tas-cf-mgmt/config/$org_name/$space_name/spaceConfig.yml
         for label in $labels
