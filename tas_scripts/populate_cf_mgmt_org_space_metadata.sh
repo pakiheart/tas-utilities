@@ -65,7 +65,7 @@ for org in $orgs; do
     for space in $spaces; do
         space_guid=$(echo $space | cut -d ":" -f 1)
         space_name=$(echo $space | cut -d ":" -f 2)
-        echo "Space: " $space_name
+        echo "  Space: " $space_name
         labels=$(cf curl /v3/spaces/$space_guid | jq '.metadata.labels' | jq -r 'to_entries[] | (.key) + ": " + (.value)')
         annotations=$(cf curl /v3/spaces/$space_guid | jq '.metadata.annotations' | jq -r 'to_entries[] | (.key) + ": " + (.value)')
         if [[ "$OSTYPE" == "linux-gnu"* ]]; then
