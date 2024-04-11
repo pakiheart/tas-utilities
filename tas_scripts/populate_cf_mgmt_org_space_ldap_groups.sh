@@ -43,10 +43,10 @@ for org in $orgs; do
 
   if [[ "$OSTYPE" == "linux-gnu"* ]]; then
     yq -i 'del(."org-manager".ldap_users)' $Path_To_Config_Dir/config/$org_name/orgConfig.yml
-    yq -i '."org-manager" += {ldap_users: []}' $Path_To_Config_Dir/config/$org_name/orgConfig.yml
+    yq -i '.org-manager.ldap_users=[]' $Path_To_Config_Dir/config/$org_name/orgConfig.yml
     yq -i '."org-manager".ldap_groups += ['"\"$org_name-OrgMgr\""']' $Path_To_Config_Dir/config/$org_name/orgConfig.yml
     yq -i 'del(."org-auditor".ldap_users)' $Path_To_Config_Dir/config/$org_name/orgConfig.yml
-    yq -i '."org-auditor" += {ldap_users: []}' $Path_To_Config_Dir/config/$org_name/orgConfig.yml
+    yq -i '.org-auditor.ldap_users=[]' $Path_To_Config_Dir/config/$org_name/orgConfig.yml
     yq -i '."org-auditor".ldap_groups += ['"\"$org_name-OrgAud\""']' $Path_To_Config_Dir/config/$org_name/orgConfig.yml
   elif [[ "$OSTYPE" == "darwin"* ]]; then
   # Mac OSX
@@ -82,16 +82,16 @@ for org in $orgs; do
     if [[ "$OSTYPE" == "linux-gnu"* ]]; then 
 
       yq -i 'del(."space-manager".ldap_users)' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
-      yq -i '."space-manager" += {ldap_users: []}' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
+      yq -i '.space-manager.ldap_users=[]' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
       yq -i '."space-manager".ldap_groups += ['"\"$org_name-$space_name-SpaceMgr\""']' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
       yq -i 'del(."space-developer".ldap_users)' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
-      yq -i '."space-developer" += {ldap_users: []}' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
+      yq -i '.space-developer.ldap_users=[]' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
       yq -i '."space-developer".ldap_groups += ['"\"$org_name-$space_name-SpaceDev\""']' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
       yq -i 'del(."space-auditor".ldap_users)' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
-      yq -i '."space-auditor" += {ldap_users: []}' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
+      yq -i '.space-auditor.ldap_users=[]' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
       yq -i '."space-auditor".ldap_groups += ['"\"$org_name-$space_name-SpaceAud\""']' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
       yq -i 'del(."space-supporter".ldap_users)' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
-      yq -i '."space-supporter" += {ldap_users: []}' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
+      yq -i '.space-supporter.ldap_users=[]' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
       yq -i '."space-supporter".ldap_groups += ['"\"$org_name-$space_name-SpaceSupp\""']' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
     elif [[ "$OSTYPE" == "darwin"* ]]; then
     # Mac OSX
