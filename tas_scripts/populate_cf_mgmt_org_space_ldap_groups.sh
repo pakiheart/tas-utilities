@@ -1,10 +1,12 @@
 #!/bin/bash
 #login into cf cli
+#Needs yq cli
 
 # This will remove ldap_users from each org and space config
 # and then add ldap_groups to each org and space
 # ldap group naming convention is OrgName-Role and OrgName-SpaceName-Role
 # It also writes out all groupnames to a text file
+
 if [ $# -eq 0 ]
   then
     echo "No arguments supplied"
