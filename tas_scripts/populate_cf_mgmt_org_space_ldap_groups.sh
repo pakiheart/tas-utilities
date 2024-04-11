@@ -1,4 +1,4 @@
- #!/bin/bash
+#!/bin/bash
 #login into cf cli
 
 # This will remove ldap_users from each org and space config
@@ -41,13 +41,23 @@ for org in $orgs; do
   echo $org_name-OrgMgr >> ldapGroupNames.txt
   echo $org_name-OrgAud >> ldapGroupNames.txt
 
-  yq -iy 'del(."org-manager".ldap_users)' $Path_To_Config_Dir/config/$org_name/orgConfig.yml
-  yq -iy '."org-manager" += {ldap_users: []}' $Path_To_Config_Dir/config/$org_name/orgConfig.yml
-  yq -iy '."org-manager".ldap_groups += ['"\"$org_name-OrgMgr\""']' $Path_To_Config_Dir/config/$org_name/orgConfig.yml
-  yq -iy 'del(."org-auditor".ldap_users)' $Path_To_Config_Dir/config/$org_name/orgConfig.yml
-  yq -iy '."org-auditor" += {ldap_users: []}' $Path_To_Config_Dir/config/$org_name/orgConfig.yml
-  yq -iy '."org-auditor".ldap_groups += ['"\"$org_name-OrgAud\""']' $Path_To_Config_Dir/config/$org_name/orgConfig.yml
-  
+  if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    yq -i 'del(."org-manager".ldap_users)' $Path_To_Config_Dir/config/$org_name/orgConfig.yml
+    yq -i '."org-manager" += {ldap_users: []}' $Path_To_Config_Dir/config/$org_name/orgConfig.yml
+    yq -i '."org-manager".ldap_groups += ['"\"$org_name-OrgMgr\""']' $Path_To_Config_Dir/config/$org_name/orgConfig.yml
+    yq -i 'del(."org-auditor".ldap_users)' $Path_To_Config_Dir/config/$org_name/orgConfig.yml
+    yq -i '."org-auditor" += {ldap_users: []}' $Path_To_Config_Dir/config/$org_name/orgConfig.yml
+    yq -i '."org-auditor".ldap_groups += ['"\"$org_name-OrgAud\""']' $Path_To_Config_Dir/config/$org_name/orgConfig.yml
+  elif [[ "$OSTYPE" == "darwin"* ]]; then
+  # Mac OSX
+    yq -iy 'del(."org-manager".ldap_users)' $Path_To_Config_Dir/config/$org_name/orgConfig.yml
+    yq -iy '."org-manager" += {ldap_users: []}' $Path_To_Config_Dir/config/$org_name/orgConfig.yml
+    yq -iy '."org-manager".ldap_groups += ['"\"$org_name-OrgMgr\""']' $Path_To_Config_Dir/config/$org_name/orgConfig.yml
+    yq -iy 'del(."org-auditor".ldap_users)' $Path_To_Config_Dir/config/$org_name/orgConfig.yml
+    yq -iy '."org-auditor" += {ldap_users: []}' $Path_To_Config_Dir/config/$org_name/orgConfig.yml
+    yq -iy '."org-auditor".ldap_groups += ['"\"$org_name-OrgAud\""']' $Path_To_Config_Dir/config/$org_name/orgConfig.yml
+  fi
+
   #update all spaces ldap groups
   total_pages=$(cf curl '/v2/organizations/'"$org_guid"'/spaces' | jq -r .total_pages)
 
@@ -69,18 +79,35 @@ for org in $orgs; do
     echo $org_name-$space_name-SpaceDev >> ldapGroupNames.txt
     echo $org_name-$space_name-SpaceAud >> ldapGroupNames.txt
     echo $org_name-$space_name-SpaceSupp >> ldapGroupNames.txt
-    yq -iy 'del(."space-manager".ldap_users)' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
-    yq -iy '."space-manager" += {ldap_users: []}' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
-    yq -iy '."space-manager".ldap_groups += ['"\"$org_name-$space_name-SpaceMgr\""']' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
-    yq -iy 'del(."space-developer".ldap_users)' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
-    yq -iy '."space-developer" += {ldap_users: []}' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
-    yq -iy '."space-developer".ldap_groups += ['"\"$org_name-$space_name-SpaceDev\""']' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
-    yq -iy 'del(."space-auditor".ldap_users)' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
-    yq -iy '."space-auditor" += {ldap_users: []}' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
-    yq -iy '."space-auditor".ldap_groups += ['"\"$org_name-$space_name-SpaceAud\""']' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
-    yq -iy 'del(."space-supporter".ldap_users)' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
-    yq -iy '."space-supporter" += {ldap_users: []}' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
-    yq -iy '."space-supporter".ldap_groups += ['"\"$org_name-$space_name-SpaceSupp\""']' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
+    if [[ "$OSTYPE" == "linux-gnu"* ]]; then 
 
+      yq -i 'del(."space-manager".ldap_users)' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
+      yq -i '."space-manager" += {ldap_users: []}' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
+      yq -i '."space-manager".ldap_groups += ['"\"$org_name-$space_name-SpaceMgr\""']' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
+      yq -i 'del(."space-developer".ldap_users)' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
+      yq -i '."space-developer" += {ldap_users: []}' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
+      yq -i '."space-developer".ldap_groups += ['"\"$org_name-$space_name-SpaceDev\""']' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
+      yq -i 'del(."space-auditor".ldap_users)' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
+      yq -i '."space-auditor" += {ldap_users: []}' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
+      yq -i '."space-auditor".ldap_groups += ['"\"$org_name-$space_name-SpaceAud\""']' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
+      yq -i 'del(."space-supporter".ldap_users)' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
+      yq -i '."space-supporter" += {ldap_users: []}' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
+      yq -i '."space-supporter".ldap_groups += ['"\"$org_name-$space_name-SpaceSupp\""']' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
+    elif [[ "$OSTYPE" == "darwin"* ]]; then
+    # Mac OSX
+      yq -iy 'del(."space-manager".ldap_users)' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
+      yq -iy '."space-manager" += {ldap_users: []}' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
+      yq -iy '."space-manager".ldap_groups += ['"\"$org_name-$space_name-SpaceMgr\""']' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
+      yq -iy 'del(."space-developer".ldap_users)' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
+      yq -iy '."space-developer" += {ldap_users: []}' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
+      yq -iy '."space-developer".ldap_groups += ['"\"$org_name-$space_name-SpaceDev\""']' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
+      yq -iy 'del(."space-auditor".ldap_users)' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
+      yq -iy '."space-auditor" += {ldap_users: []}' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
+      yq -iy '."space-auditor".ldap_groups += ['"\"$org_name-$space_name-SpaceAud\""']' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
+      yq -iy 'del(."space-supporter".ldap_users)' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
+      yq -iy '."space-supporter" += {ldap_users: []}' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
+      yq -iy '."space-supporter".ldap_groups += ['"\"$org_name-$space_name-SpaceSupp\""']' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
+
+    fi
   done
 done
