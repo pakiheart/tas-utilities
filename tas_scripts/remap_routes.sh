@@ -72,8 +72,8 @@ for org in $orgs; do
             cf unmap-route $app_name $Domain_Name --hostname $hostname
             cf map-route $app_name $Domain_Name --hostname $hostname
           else     
-            cf unmap-route $app_name $Domain_Name --hostname $hostname --path $(echo /$path | cut -d "/" -f 1)
-            cf map-route $app_name $Domain_Name --hostname $hostname --path $(echo /$path | cut -d "/" -f 1)
+            cf unmap-route $app_name $Domain_Name --hostname $hostname --path $path
+            cf map-route $app_name $Domain_Name --hostname $hostname --path $path
           fi
         fi
       done
