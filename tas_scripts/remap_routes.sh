@@ -61,19 +61,19 @@ for org in $orgs; do
       hosts=$(cf curl /v3/apps/$app_guid/routes | jq -r '.resources[] | .host + ":" + .path + ":" + .url')
       cf target -o $org_name -s $space_name
       for host in $hosts; do
-        host=$(echo $host | cut -d ":" -f 1)
+        host_url=$(echo $host | cut -d ":" -f 1)
         path=$(echo $host | cut -d ":" -f 2)
         url=$(echo $host | cut -d ":" -f 3)
         if [[ $url == *.$Domain_Name ]]; then
           echo "App name: "  $app_name
-          echo "Host: " $host
+          echo "Host: " $host_url
           echo "Path: " $path
           if [ -z $path ]; then
-            cf unmap-route $app_name $Domain_Name --hostname $host
-            cf map-route $app_name $Domain_Name --hostname $host
+            cf unmap-route $app_name $Domain_Name --hostname $host_url
+            cf map-route $app_name $Domain_Name --hostname $host_url
           else     
-            cf unmap-route $app_name $Domain_Name --hostname $host --path $path
-            cf map-route $app_name $Domain_Name --hostname $host --path $path
+            cf unmap-route $app_name $Domain_Name --hostname $host_url --path $path
+            cf map-route $app_name $Domain_Name --hostname $host_url --path $path
           fi
         fi
       done
