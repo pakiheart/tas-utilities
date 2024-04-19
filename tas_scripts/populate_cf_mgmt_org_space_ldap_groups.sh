@@ -1,6 +1,6 @@
 #!/bin/bash
 #login into cf cli
-#Needs yq cli
+# Needs yq cli
 
 # This will remove ldap_users from each org and space config
 # and then add ldap_groups to each org and space

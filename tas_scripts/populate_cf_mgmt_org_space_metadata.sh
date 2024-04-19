@@ -1,5 +1,6 @@
  #!/bin/bash
 #login into cf cli
+# Needs yq cli
 
 if [ $# -eq 0 ]
   then
@@ -36,13 +37,12 @@ for org in $orgs; do
     labels=$(cf curl /v3/organizations/$org_guid | jq '.metadata.labels' | jq -r 'to_entries[] | (.key) + ": " + (.value)')
     annotations=$(cf curl /v3/organizations/$org_guid | jq '.metadata.annotations' | jq -r 'to_entries[] | (.key) + ": " + (.value)')
     if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-        sed -i '/metadata/d' $Path_To_Config_Dir/config/$org_name/orgConfig.yml
-        sed -i '/^$/d' $Path_To_Config_Dir/config/$org_name/orgConfig.yml
+        yq -i 'del(.metadata)' $Path_To_Config_Dir/config/$org_name/orgConfig.yml
     elif [[ "$OSTYPE" == "darwin"* ]]; then
         # Mac OSX
-        sed -i '' '/metadata/d' $Path_To_Config_Dir/config/$org_name/orgConfig.yml
-        sed -i '' '/^$/d' $Path_To_Config_Dir/config/$org_name/orgConfig.yml
+        yq -iy 'del(.metadata)' $Path_To_Config_Dir/config/$org_name/orgConfig.yml
     fi
+
     echo "metadata:" >> $Path_To_Config_Dir/config/$org_name/orgConfig.yml
     echo "  labels:" >> $Path_To_Config_Dir/config/$org_name/orgConfig.yml
     for label in $labels
