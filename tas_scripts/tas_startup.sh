@@ -10,7 +10,7 @@ echo -e "My Deployments: \n" $deployments
 for deployment in $deployments; do
 	if [[ "${deployment}" =~ "cf-" ]]; then
 		echo "****************** First Starting TAS: " $deployment " ******************"
-		bosh -n -d ${deployment} start --max-in-flight=3
+		bosh -n -d ${deployment} start 
 		echo "****************** deployment startup completed ******************"
 		break
 	fi
@@ -24,7 +24,7 @@ for deployment in $deployments; do
         fi
 
 	echo "****************** Starting up deployment: " $deployment " ******************"
- 	bosh -n -d ${deployment} start --max-in-flight=3
+ 	bosh -n -d ${deployment} start 
   	echo "****************** deployment shutdown completed ******************"
 done
 
