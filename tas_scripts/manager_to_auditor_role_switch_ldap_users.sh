@@ -1,6 +1,5 @@
 #!/bin/bash
-
-#!/bin/bash
+set -ex
 #login into cf cli
 # Needs yq cli
 
@@ -36,7 +35,8 @@ for org in $orgs; do
       continue
   fi
 
-  org_ldap_users=$(cat $Path_To_Config_Dir/config/$org_name/orgConfig.yml | yq -r '."org-manager".ldap_users.[]')
+  if [[ $(cat $Path_To_Config_Dir/config/$org_name/orgConfig.yml | yq -r '."org-manager".ldap_users | length') > 0 ]]; then
+    org_ldap_users=$(cat $Path_To_Config_Dir/config/$org_name/orgConfig.yml | yq -r '."org-manager".ldap_users.[]')
 
     for org_ldap_user in $org_ldap_users; do
         if [[ "$OSTYPE" == "linux-gnu"* ]]; then
@@ -45,9 +45,9 @@ for org in $orgs; do
         elif [[ "$OSTYPE" == "darwin"* ]]; then
             yq -iy 'del(."org-manager".ldap_users)' $Path_To_Config_Dir/config/$org_name/orgConfig.yml
             yq  -iy '."org-auditor".ldap_users += ['"\"$org_ldap_user\""']'  $Path_To_Config_Dir/config/$org_name/orgConfig.yml
-        done
+        fi
     done
-
+  fi
   total_pages=$(cf curl '/v2/organizations/'"$org_guid"'/spaces' | jq -r .total_pages)
 
   spaces=""
@@ -63,16 +63,19 @@ for org in $orgs; do
   for space in $spaces; do
     space_guid=$(echo $space | cut -d ":" -f 1)
     space_name=$(echo $space | cut -d ":" -f 2)
-    space_ldap_users=$(cat $$Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml | yq -r '."space-manager".ldap_users.[]')
+
+    if [[ $(cat $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml | yq -r '."space-manager".ldap_users | length') > 0 ]]; then
+      space_ldap_users=$(cat $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml | yq -r '."space-manager".ldap_users.[]')
 
     for space_ldap_user in $space_ldap_users; do
         if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-            yq -i 'del(."space-manager".ldap_users)' $$Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
-            yq -i '."space-auditor".ldap_users += ['"\"$space_ldap_user\""']'  $$Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
+            yq -i 'del(."space-manager".ldap_users)' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
+            yq -i '."space-auditor".ldap_users += ['"\"$space_ldap_user\""']'  $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
         elif [[ "$OSTYPE" == "darwin"* ]]; then
-            yq -iy 'del(."space-manager".ldap_users)' $$Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
-            yq  -iy '."space-auditor".ldap_users += ['"\"$space_ldap_user\""']' $$Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
-        done
+            yq -iy 'del(."space-manager".ldap_users)' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
+            yq  -iy '."space-auditor".ldap_users += ['"\"$space_ldap_user\""']' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
+        fi
     done
+    fi
   done
 done
