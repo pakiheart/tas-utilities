@@ -1,5 +1,5 @@
 #!/bin/bash
-set -ex
+
 #login into cf cli
 # Needs yq cli
 
