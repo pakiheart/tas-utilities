@@ -44,7 +44,16 @@ for org in $orgs; do
             yq -i '."org-auditor".ldap_users += ['"\"$org_ldap_user\""']'  $Path_To_Config_Dir/config/$org_name/orgConfig.yml
         elif [[ "$OSTYPE" == "darwin"* ]]; then
             yq -iy 'del(."org-manager".ldap_users)' $Path_To_Config_Dir/config/$org_name/orgConfig.yml
-            yq  -iy '."org-auditor".ldap_users += ['"\"$org_ldap_user\""']'  $Path_To_Config_Dir/config/$org_name/orgConfig.yml
+            yq -iy '."org-auditor".ldap_users += ['"\"$org_ldap_user\""']'  $Path_To_Config_Dir/config/$org_name/orgConfig.yml
+        fi
+    done
+    remove_dup_org_users=$(cat $Path_To_Config_Dir/config/$org_name/orgConfig.yml | yq -r '."org-auditor".ldap_users | unique' | yq .[])
+    yq -i 'del(."org-auditor".ldap_users)' $Path_To_Config_Dir/config/$org_name/orgConfig.yml
+    for remove_dup_org_user in $remove_dup_org_users; do
+        if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+            yq -i '."org-auditor".ldap_users += ['"\"$remove_dup_org_user\""']'  $Path_To_Config_Dir/config/$org_name/orgConfig.yml
+        elif [[ "$OSTYPE" == "darwin"* ]]; then
+            yq -iy '."org-auditor".ldap_users += ['"\"$remove_dup_org_user\""']'  $Path_To_Config_Dir/config/$org_name/orgConfig.yml
         fi
     done
   fi
@@ -67,15 +76,24 @@ for org in $orgs; do
     if [[ $(cat $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml | yq -r '."space-manager".ldap_users | length') > 0 ]]; then
       space_ldap_users=$(cat $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml | yq -r '."space-manager".ldap_users.[]')
 
-    for space_ldap_user in $space_ldap_users; do
-        if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-            yq -i 'del(."space-manager".ldap_users)' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
-            yq -i '."space-auditor".ldap_users += ['"\"$space_ldap_user\""']'  $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
-        elif [[ "$OSTYPE" == "darwin"* ]]; then
-            yq -iy 'del(."space-manager".ldap_users)' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
-            yq  -iy '."space-auditor".ldap_users += ['"\"$space_ldap_user\""']' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
-        fi
-    done
+      for space_ldap_user in $space_ldap_users; do
+          if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+              yq -i 'del(."space-manager".ldap_users)' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
+              yq -i '."space-auditor".ldap_users += ['"\"$space_ldap_user\""']'  $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
+          elif [[ "$OSTYPE" == "darwin"* ]]; then
+              yq -iy 'del(."space-manager".ldap_users)' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
+              yq  -iy '."space-auditor".ldap_users += ['"\"$space_ldap_user\""']' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
+          fi
+      done
+      remove_dup_space_users=$(cat $Path_To_Config_Dir/config/$org_name/orgConfig.yml | yq -r '."org-auditor".ldap_users | unique' | yq .[])
+      yq -i 'del(."org-auditor".ldap_users)' $Path_To_Config_Dir/config/$org_name/orgConfig.yml
+      for remove_dup_space_user in $remove_dup_space_users; do
+          if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+              yq -i '."org-auditor".ldap_users += ['"\"$remove_dup_space_user\""']'  $Path_To_Config_Dir/config/$org_name/orgConfig.yml
+          elif [[ "$OSTYPE" == "darwin"* ]]; then
+              yq -iy '."org-auditor".ldap_users += ['"\"$remove_dup_space_user\""']'  $Path_To_Config_Dir/config/$org_name/orgConfig.yml
+          fi
+      done
     fi
   done
 done
