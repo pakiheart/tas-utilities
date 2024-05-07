@@ -86,12 +86,12 @@ for org in $orgs; do
           fi
       done
       remove_dup_space_users=$(cat $Path_To_Config_Dir/config/$org_name/orgConfig.yml | yq -r '."org-auditor".ldap_users | unique' | yq .[])
-      yq -i 'del(."org-auditor".ldap_users)' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
+      yq -i 'del(."space-auditor".ldap_users)' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
       for remove_dup_space_user in $remove_dup_space_users; do
           if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-              yq -i '."org-auditor".ldap_users += ['"\"$remove_dup_space_user\""']'  $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
+              yq -i '."space-auditor".ldap_users += ['"\"$remove_dup_space_user\""']'  $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
           elif [[ "$OSTYPE" == "darwin"* ]]; then
-              yq -iy '."org-auditor".ldap_users += ['"\"$remove_dup_space_user\""']'  $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
+              yq -iy '."space-auditor".ldap_users += ['"\"$remove_dup_space_user\""']'  $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
           fi
       done
     fi
