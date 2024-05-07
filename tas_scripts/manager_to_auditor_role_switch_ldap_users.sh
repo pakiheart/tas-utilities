@@ -85,7 +85,7 @@ for org in $orgs; do
               yq  -iy '."space-auditor".ldap_users += ['"\"$space_ldap_user\""']' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
           fi
       done
-      remove_dup_space_users=$(cat $Path_To_Config_Dir/config/$org_name/orgConfig.yml | yq -r '."org-auditor".ldap_users | unique' | yq .[])
+      remove_dup_space_users=$(cat $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml | yq -r '."space-auditor".ldap_users | unique' | yq .[])
       yq -i 'del(."space-auditor".ldap_users)' $Path_To_Config_Dir/config/$org_name/$space_name/spaceConfig.yml
       for remove_dup_space_user in $remove_dup_space_users; do
           if [[ "$OSTYPE" == "linux-gnu"* ]]; then
