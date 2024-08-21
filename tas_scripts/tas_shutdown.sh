@@ -15,12 +15,12 @@ for deployment in $deployments; do
 	  continue
   fi
   echo "****************** Shutting down deployment: " $deployment " ******************"
-  bosh -n -d ${deployment} stop  --hard 
+  bosh -n -d ${deployment} stop  #--hard IF you want to also delete VM's
   echo "****************** deployment shutdown completed ******************"
 done
 
 echo "****************** Shutting down deployment: " $tas_deployment " ******************"
-bosh -n -d ${tas_deployment} stop  --hard 
+bosh -n -d ${tas_deployment} stop  #--hard IF you want to also delete VM's
 echo "****************** deployment shutdown completed ******************"
 
 echo "Start Time: " $start_time
